@@ -1,0 +1,56 @@
+
+
+body {
+ 	margin: 0;
+ 	padding: 0;
+ 	height: 100%;
+}
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+#login-form {
+	margin-top: 10%;
+}
+#footer {
+    position: absolute;
+    width: 100%;
+	clear: both;
+    bottom: 0;
+    margin: 0;
+    padding: 15px; 
+    background: #333;
+	color: white;
+	text-align: center;
+	
+}
+
+.quiz_add_answer{
+	color: green;
+}
+
+/*Bootstrap Custom */
+
+.container {
+    padding-bottom: 15px; 
+	padding-top: 15px; 
+}
+.row{
+	margin-bottom: 1em;	
+}
+
+.fade {
+  opacity: 1;
+}
+
+.modal .modal-dialog {
+  -webkit-transform: translate(0, 0);
+  -ms-transform: translate(0, 0);
+  -o-transform: translate(0, 0);
+  transform: translate(0, 0);
+}
+
+.modal-backdrop {
+  opacity: 0.5;
+}
