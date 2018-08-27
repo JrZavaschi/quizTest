@@ -30,38 +30,71 @@ $(document).ready(function () {
 
 
 	/*Quiz new form submit function to insert data */
-	$('#new_quiz_form').submit(function (e) {
+	$('#newORedit_quiz_form').submit(function (e) {
 
 		var data;
-
 		data = new FormData(this);
 
-		$.ajax({
-			url: '../controller/quiz_form.php?method=insert',
-			data: data,
-			processData: false,
-			type: 'POST',
-			contentType: false,
-			success: function (data) {
+		var handle_quiz = $('#handle').val();
+		
+		if(handle_quiz > 0){
 
-				var json = $.parseJSON(data);
+			$.ajax({
+				url: '../controller/quiz_form.php?method=update',
+				data: data,
+				processData: false,
+				type: 'POST',
+				contentType: false,
+				success: function (data) {
+					
+					var json = $.parseJSON(data);
 
-				if (json.sucess === 'S') {
-					$('#created_at').val(json.datetime);
-					$('#handle').val(json.handle);
-					$('#quiz_new_question').removeAttr('disabled');
-					$('#return_message').removeAttr('hidden');
-					$('#return_message').html('Insert QUIZ - Success, continue to include questions!');
-					$('#quiz_question').val(json.handle);
-					$('#quiz_question_visible').val(json.handle);
+					if (json.sucess === 'S') {
 
-					$('#questionFormModal').modal('show');
-				} else {
-					$('#return_message').html('Insert QUIZ - Error!');
+						$('#return_message').removeAttr('hidden');
+						$('#return_message').html('Quiz updated success!');
+
+					} else {
+						
+						$('#return_message').removeAttr('hidden');
+						$('#return_message').html('Insert QUIZ - Error!');
+
+					}
 				}
-			}
-		});
+			});
 
+		}
+		else{
+			$.ajax({
+				url: '../controller/quiz_form.php?method=insert',
+				data: data,
+				processData: false,
+				type: 'POST',
+				contentType: false,
+				success: function (data) {
+
+					var json = $.parseJSON(data);
+
+					if (json.sucess === 'S') {
+						$('#created_at').val(json.datetime);
+						$('#handle').val(json.handle);
+						$('#quiz_new_question').removeAttr('disabled');
+						$('#return_message').removeAttr('hidden');
+						$('#return_message').html('Insert QUIZ - Success, continue to include questions!');
+						$('#quiz_question').val(json.handle);
+						$('#quiz_question_visible').val(json.handle);
+
+						$('#questionFormModal').modal('show');
+					} else {
+						$('#return_message').html('Insert QUIZ - Error!');
+					}
+				}
+			});
+
+		}
+
+		
+		
 		e.preventDefault();
 	});
 
@@ -90,7 +123,9 @@ $(document).ready(function () {
 
 					$('#quiz_question_form input').val('');
 
-					$('#table_questions tbody').append("<tr><td><input type='checkbox' /></td><td>" + json.type + "</td><td>" + json.name + "</td>  <td><button type='button' class='btn btn-default question_edit' id='question_edit'><i class='fa fa-pencil' id='" + json.handle + "'></i></button></td></tr>");
+					$('#quiz_delete_question').removeAttr('hidden');
+					
+					$('#table_questions tbody').append("<tr id='" + json.handle + "'><td><input type='radio' /></td><td>" + json.type + "</td><td>" + json.name + "</td> <td>"+json.datetime+"</td></tr>");
 
 				} else {
 					$('#return_message').html('Insert Question - Error!');
@@ -101,6 +136,8 @@ $(document).ready(function () {
 
 		e.preventDefault();
 	});
+
+	
 
 	//type button define
 	$('#type_question').change(function () {
@@ -126,7 +163,7 @@ $(document).ready(function () {
 		}
 
 		if ($("#type_question option:selected").text() === 'Multiple') {
-			var new_answer_content_multiple = '<div class="col-sm-10"> <label for="name_answer">Name <font color="red">*</font></label> <input type="text" name="name_answer[]" class="form-control" required> </div> <div class="col-sm-1"> <label for="is_correct_answer">Is Correct</label> <input type="checkbox" value="S" name="is_correct_answer[]"  class="form-control is_correct_answer"> </div><div class="col-sm-1"></div>';
+			var new_answer_content_multiple = '<div class="col-sm-10"> <label for="name_answer">Name <font color="red">*</font></label> <input type="text" name="name_answer[]" class="form-control" required> </div> <div class="col-sm-1"> <label for="is_correct_answer">Is Correct</label> <input type="radio" value="S" name="is_correct_answer[]"  class="form-control is_correct_answer"> </div><div class="col-sm-1"></div>';
 			$('#question_include_answer').html($('#question_include_answer').html() + new_answer_content_multiple);
 		}
 
@@ -134,11 +171,47 @@ $(document).ready(function () {
 
 	});
 
-	//question edit button click
-	$('#question_edit').click(function () {
-		
-		$('#questionFormModal').modal('show');
-	});
+	//getQuiz to form edit
+	var handle_edit_quiz = $('#handle').val();
 
+	if(handle_edit_quiz > 0){
+		
+		//functions to button new question
+		$('#quiz_new_question').removeAttr('disabled');
+		$('#quiz_delete_question').removeAttr('hidden');
+		
+		$('#quiz_new_question').click(function(){
+			$('#quiz_question_visible').val(handle_edit_quiz);
+			$('#quiz_question').val(handle_edit_quiz);
+		});
+
+		$.getJSON( '../controller/getQuiz.php?search=',{ajax: 'true', 'h': handle_edit_quiz}, function(data) {
+			
+			$('#name').val(data.name);
+			$('#description').val(data.description);
+			$('#created_at').val(data.created_at);
+			$('#updated_at').val(data.updated_at);
+			
+		});
+
+	}
+
+	
+	//question edit button click to modal
+	$('#quiz_delete_question').click(function () {
+
+		var handle_question_select = $('input[type=radio]:checked').val();
+		
+		$.getJSON( '../controller/delQuestion.php?search=',{ajax: 'true', 'h': handle_question_select}, function(data) {
+		
+			$('#return_message').removeAttr('hidden');
+			$('#return_message').html(data.message);
+
+			if(data.sucess === 'S'){
+				$("tr#"+handle_question_select).css({ display: "none" })
+			}
+		});
+	
+	});
 
 });

@@ -8,6 +8,9 @@ include_once('technology/Sistema.php');
 		private $quiz;
 		private $handle;
 		private $answercount;
+		private $created_at;
+		private $updated_at;
+		private $questioncount;
 		
 		public function setName($name){
 			$this->name = $name;
@@ -35,6 +38,19 @@ include_once('technology/Sistema.php');
 			$row = $select->fetchObject(__CLASS__);
 			return($row['COUNTER']);
 		}
+
+		public function setQuestioncount($questioncount){
+			$this->questioncount = $questioncount;
+		}
+		
+
+		public function setCreated_at($created_at){
+			$this->created_at = $created_at;
+		}
+
+		public function setUpdated_at($updated_at){
+			$this->updated_at = $updated_at;
+		}
 		
 		public function getName(){
 			return $this->name;
@@ -54,6 +70,18 @@ include_once('technology/Sistema.php');
 		
 		public function getAnswercount(){
 			return $this->answercount;
+		}
+
+		public function getQuestioncount(){
+			return $this->questioncount;
+		}
+
+		public function getCreated_at(){
+			return $this->created_at;
+		}
+
+		public function getUpdated_at(){
+			return $this->updated_at;
 		}
 		
 		public function getDateTime(){
@@ -85,5 +113,66 @@ include_once('technology/Sistema.php');
 			endif;
 		}
 
+		public function GetQuestion(){
+			
+			$connection = Sistema::getConexao();
+			
+			$question = $connection->prepare("SELECT A.`HANDLE`, 
+											  A.`QUIZ`, 
+											  A.`TYPE`, 
+											  A.`CREATED_AT`, 
+											  A.`UPDATED_AT`,
+											  A.`NAME`, 
+											  (SELECT COUNT(X.HANDLE) FROM qz_question X WHERE X.QUIZ = A.QUIZ) AS COUNTER 
+											  FROM `qz_question` A 
+											  WHERE A.QUIZ = ?
+											  GROUP BY A.`HANDLE`, A.`QUIZ`, A.`TYPE`, A.`CREATED_AT`, A.`UPDATED_AT`, A.`NAME`");
+			
+			$question->bindValue(1, $this->getQuiz());
+			$question->execute();
+
+			while($row_question = $question->FETCH(PDO::FETCH_ASSOC)){
+				
+				$handle_question = $row_question['HANDLE'];
+				$name_question = $row_question['NAME'];
+				$type_question = $row_question['TYPE'];
+				$created_at_question = $row_question['CREATED_AT'];
+				$updated_at_question = $row_question['UPDATED_AT'];
+				$counter_question = $row_question['COUNTER'];
+				
+				$this->setHandle($handle_question);
+				$this->setName($name_question);
+				$this->setType($type_question);
+				$this->setCreated_at($created_at_question);
+				$this->setUpdated_at($updated_at_question);
+				$this->setQuestioncount($counter_question);
+
+				if ($name_question <> ''){
+					return true;
+				}else{
+					return false;
+				}
+			}
+
+		}
+
+		public function DelQuestion(){
+			
+			$connection = Sistema::getConexao();
+			
+			$del = $connection->prepare("DELETE FROM `qz_question`  WHERE HANDLE = ?");
+			
+			$del->bindValue(1, $this->getHandle());
+			$del->execute();
+		
+			$connection->commit();
+
+			if ($del->execute()){
+				return true;
+			}else{
+				return false;
+			}
+		}
+			
 	}
 ?>

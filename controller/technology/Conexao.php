@@ -17,11 +17,6 @@ class Conexao extends BancoDados {
             self::$instancia->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
          }
          catch (Exception $ex) {
-			 session_destroy();
-			 session_start();
-
-			 $retorno = "Servidor em manutenção, tente novamente em alguns minutos, obrigado!";
-			 $_SESSION['retorno'] = $retorno;
 			 header('Location: ../../view/estrutura/login.php');
          }
       }

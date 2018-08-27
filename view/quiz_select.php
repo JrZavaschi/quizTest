@@ -17,6 +17,10 @@
         <div class="container">
         	<div class="row">
 				<div class="col-sm-12">
+					<a href="index.php"><button type="button" class="btn btn-primary">Admin panel</button></a>
+					<br/>
+				</div>
+				<div class="col-sm-12">
 					<table class="table table-dark table-hover" id="quiz_select">
 						<thead>
 							<th>#</th>

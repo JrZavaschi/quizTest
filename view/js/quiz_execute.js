@@ -1,52 +1,64 @@
 $( document ).ready(function() {
-    
+
 	var quiz_handle = $('#quiz_handle').val();
 
-		
-	$.getJSON( '../controller/getQuestion.php?search=',{ajax: 'true', 'h': quiz_handle}, function(data) {
-		
-		console.log( data[0]['pages'][1]['questions']);
-
-		$.each( data, function (key, value) {
-			
-			var json_encode = JSON.stringify(value);
-			//alert(json_encode);
-			//console.log(json_encode);
-
-
+		var jsonQuiz = {}; 
+		var jsonQuiz = {};
+    $.ajax({
+        url: "../controller/getQuizExecute.php?h="+quiz_handle,
+        async: false,
+        dataType: 'json',
+        success: function(data) {
+					jsonQuiz = data;
+        }
 		});
-
-
-	var json = {
-		title: data[0]['title'],
-		showProgressBar: "bottom",
-		showTimerPanel: "top",
-		maxTimeToFinishPage: 10,
-		maxTimeToFinish: 25,
-		firstPageIsStarted: true,
-		startSurveyText: "Start Quiz",
-		pages: [
-			data[0]['pages'][1]
-		],
-		completedHtml: "<h4>You have answered correctly <b>{correctedAnswers}</b> questions from <b>{questionCount}</b>.</h4>"
-	}
-		console.log(JSON.stringify(json));
-	Survey.Survey.cssType = "bootstrap";
 		
-	var survey = new Survey.Model(json);
-	
-	survey
-	  .onComplete
-	  .add(function(result) {
-		document
-		  .querySelector('#surveyResult')
-		  .innerHTML = "result: " + JSON.stringify(result.data);
-	  });
+		var jsonQuestion = {}; 
+		var jsonQuestion = {};
+			$.ajax({
+					url: "../controller/getQuestionExecute.php?h="+jsonQuiz.handle,
+					async: false,
+					dataType: 'json',
+					success: function(data) {
+						jsonQuestion = JSON.stringify(data);
+					}
+			});
 
-	$("#surveyElement").Survey({
-	  model: survey
-	});
+	var surveyJSON = {
 
-});
+		"title": jsonQuiz.subject,
+		"completedHtml":"Thanks!",
+			"pages": JSON.parse(jsonQuestion)
+		}
+
+
+	function sendDataToServer(survey) {
+
+		var yourname = $('#yourname').val();
+		var youremail = $('#youremail').val();
+		var initialized_at = $('#initialized_at').val();
+
+		//send Ajax request to db.
+		$.ajax({
+			url: "../controller/postQuestionExecute.php?h="+jsonQuiz.handle,
+			data: {"answer" : JSON.stringify(survey.data), "yourname": yourname, "youremail": youremail, "initialized_at": initialized_at},
+			dataType: "json",
+			type: 'POST',
+			success: function(data) {
+				console.log(data);
+			}
+		});
+	}
+
+	//define style bootstrap to survey
+	Survey.Survey.cssType = "bootstrap";
+	Survey.defaultBootstrapCss.navigationButton = "btn btn-success";
 	
+	var survey = new Survey.Model(surveyJSON);
+
+	$("#surveyContainer").Survey({
+			model: survey,
+			onComplete: sendDataToServer
+	});	
+
 });

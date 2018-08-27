@@ -28,10 +28,34 @@ if (isset($_GET['method'])){
 		
 	}//end insert method
 	else if($_GET['method'] == 'update'){
+
+		$name = Sistema::getPost('name');
+		$description = Sistema::getPost('description');
+		$handle = Sistema::getPost('handle_quiz');
 		
+		$q = new Quiz;
+
+		$q->setName($name);
+		$q->setDescription($description);
+		$q->setHandle($handle);
+
+		$q->Update();
+		
+		if($q->Update()){
+			
+			$dataReturn = array('sucess'=>'S', 'handle'=>$q->getHandle(), 'name'=>$q->getName(), 'datetime'=>$q->getDateTime());
+			echo json_encode($dataReturn);
+			
+		}
+		else{
+
+			$dataReturn = array('sucess'=>'N', 'handle'=>$handle, 'datetime'=>$q->getDateTime());
+			echo json_encode($dataReturn);
+
+		}
 	}//end insert method
 	
-} //if (isset($_POST['quiz_form_save']))
+} //end if isset method
 
 
 ?>

@@ -1,3 +1,7 @@
+<?php
+	include('../controller/technology/Sistema.php');
+	$handle_quiz = Sistema::getGet('h');
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -14,32 +18,15 @@
 	<link href="css/style.css" rel="stylesheet" id="bootstrap-css">	
 </head>
 <body>
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-       <a class="navbar-brand" href="#">QUIZTest</a>
-       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-       <span class="navbar-toggler-icon"></span>
-       </button>
-       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-             <li class="nav-item ">
-                <a class="nav-link" href="index.php">Home </a>
-             </li>
-             <li class="nav-item active">
-                <a class="nav-link" href="quiz.php">QUIZ <span class="sr-only">(current)</span></a>
-             </li>
-			 <li class="nav-item">
-                <a class="nav-link" href="executions.php">Executions</a>
-             </li>
-          </ul>
-             <button class="btn btn-outline-danger my-2 my-sm-0" id="logout" type="button">Logout</button>
-       </div>
-    </nav>
+	<?php
+		include('header_nav.php');
+	?>
 	
         <div class="container">
-			<form action="" method="post" id="new_quiz_form" class="form-horizontal" role="form" novalidate>
+			<form action="" method="post" id="newORedit_quiz_form" class="form-horizontal" role="form" novalidate>
 				<div class="row">
 					<div class="col-sm-12">
-						<button type="button" class="btn btn-info" id="back_quiz"> <i class="fa fa-plus"></i> Back</button>
+						<button type="button" class="btn btn-info" id="back_quiz"> <i class="fa fa-arrow-left"></i> Back</button>
 					</div>
 					<div class="col-sm-12">
 						<br>
@@ -60,11 +47,12 @@
 						</div>
 						<div class="col-sm-1">
 							<label for="handle">Handle</label>
-							<input type="text" name="handle" id="handle" class="form-control" disabled>
+							<input type="text" name="handle" id="handle" value="<?php echo $handle_quiz; ?>" class="form-control" disabled>
+							<input type="text" name="handle_quiz" id="handle_quiz" value="<?php echo $handle_quiz; ?>" class="form-control" hidden="true">
 						</div>
 						<div class="col-sm-12">
-							<label for="desctiption">Description <font color="red">*</font></label>
-							<textarea name="desctiption" id="desctiption" class="form-control" placeholder="Description"></textarea>
+							<label for="description">Description <font color="red">*</font></label>
+							<textarea name="description" id="description" class="form-control" placeholder="Description"></textarea>
 						</div>
 						<div class="col-sm-12">
 							<br>
@@ -84,7 +72,8 @@
 							<h4>Questions</h4>
 						</div>
 						<div class="col-sm-12">
-							<button type="button" class="btn btn-info" id="quiz_new_question" data-toggle="modal" data-target="#questionFormModal" disabled>New Question</button>
+						<button type="button" class="btn btn-info" id="quiz_new_question" data-toggle="modal" data-target="#questionFormModal" disabled>New Question</button>
+						<button type="button" class="btn btn-danger" id="quiz_delete_question" hidden="true">Delete Question</button>
 							<?php include('question_form_modal.php'); ?>
 						</div>
 						<div class="col-sm-12">
@@ -93,7 +82,7 @@
 									<th>#</th>
 									<th>Type</th>
 									<th>Name</th>
-									<th><i class="fa fa-cogs"></i></th>
+									<th>Created at</th>
 								</thead>
 								<tbody></tbody>
 							</table>
@@ -110,5 +99,6 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="js/script.js"></script>
+	<script src="js/tables.js"></script>
 </body>
 </html>

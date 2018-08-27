@@ -3,7 +3,7 @@
 		<div class="modal-content">
 			<form action="" method="post" id="quiz_question_form" class="form-horizontal" role="form" novalidate>
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLongTitle">Include Question</h5>
+				<h5 class="modal-title" id="exampleModalLongTitle">Question Form</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
